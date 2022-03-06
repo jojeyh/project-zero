@@ -1,6 +1,5 @@
 package com.revature.dao;
 
-import com.revature.model.Client;
 import com.revature.utility.ConnectionUtility;
 
 import java.sql.Connection;
@@ -9,16 +8,16 @@ import java.sql.SQLException;
 
 public class BankDao {
 
-    public void createClient(Client client) {
+    public void createClient(String lastName, String firstName) {
         try (Connection conn = ConnectionUtility.getConnection()) {
-            Stringbuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
 
-            sb.append("INSERT INTO clients (firstName, lastName) VALUES ('");
-            sb.append(client.getLastName());
+            sb.append("INSERT INTO clients (lastName, firstName) VALUES ('");
+            sb.append(lastName);
             sb.append("', '");
-            sb.append(client.getFirstName());
+            sb.append(firstName);
             sb.append("')");
-
+            System.out.println(sb.toString());
             PreparedStatement stmt = conn.prepareStatement(sb.toString());
 
             stmt.executeUpdate();
