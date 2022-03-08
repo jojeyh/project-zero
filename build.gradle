@@ -16,6 +16,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
     implementation 'org.json:json:20211205'
     implementation 'org.slf4j:slf4j-simple:1.8.0-beta4'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.4'
 }
 
 test {

@@ -17,8 +17,6 @@ public class ConnectionUtility {
         String username = System.getenv("DB_USER");
         String password = System.getenv("DB_PASS");
 
-        System.out.println(url + username + password);
-
         Connection conn = DriverManager.getConnection(url, username, password);
 
         return conn;

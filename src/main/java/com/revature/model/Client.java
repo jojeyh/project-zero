@@ -9,6 +9,16 @@ public class Client {
     private int id;
     private ArrayList<Account> accounts;
 
+    public Client() {
+    }
+
+    public Client(String firstName, String lastName, int id) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.id = id;
+        this.accounts = new ArrayList<Account>();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -38,7 +48,9 @@ public class Client {
         this.lastName = lastName;
     }
 
-    public Client(int id, ArrayList<Account> accounts) {
+    public Client(int id, String firstName, String lastName, ArrayList<Account> accounts) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.id = id;
         this.accounts = accounts;
     }
@@ -57,5 +69,9 @@ public class Client {
 
     public void setAccounts(ArrayList<Account> accounts) {
         this.accounts = accounts;
+    }
+
+    public void addAccount(Account account) {
+        accounts.add(account);
     }
 }

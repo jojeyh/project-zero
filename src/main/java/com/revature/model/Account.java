@@ -1,13 +1,26 @@
 package com.revature.model;
 
 public class Account {
-    private Integer balance; // balance in cents
+    private int balance; // balance in cents
     private int id;
     private AccountType accountType;
 
-    private enum AccountType {
+    public Account() {};
+
+    public enum AccountType {
         CHECKING,
         SAVINGS;
+    }
+
+    public Account(int balance, int id) {
+        this.balance = balance;
+        this.id = id;
+    }
+
+    public Account(int balance, int id, AccountType accountType) {
+        this.balance = balance;
+        this.id = id;
+        this.accountType = accountType;
     }
 
     public AccountType getAccountType() {
