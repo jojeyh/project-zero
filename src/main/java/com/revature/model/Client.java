@@ -7,29 +7,54 @@ public class Client {
     private String firstName;
     private String lastName;
     private int id;
-    private ArrayList<Account> accounts;
+    private ArrayList<Integer> accounts;
 
     public Client() {
+    }
+
+    public Client(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.id = 0;
+        this.accounts = new ArrayList<Integer>();
+        this.accounts.add(0);
     }
 
     public Client(String firstName, String lastName, int id) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.id = id;
-        this.accounts = new ArrayList<Account>();
+        this.accounts = new ArrayList<Integer>();
+        this.accounts.add(0);
+    }
+
+    public Client(String firstName, String lastName, int id, ArrayList<Integer> accounts) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.id = id;
+        this.accounts = accounts;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Client)) return false;
         Client client = (Client) o;
-        return id == client.id && Objects.equals(firstName, client.firstName) && Objects.equals(lastName, client.lastName) && Objects.equals(accounts, client.accounts);
+        return getId() == client.getId() && getFirstName().equals(client.getFirstName()) && getLastName().equals(client.getLastName()) && getAccounts().equals(client.getAccounts());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, id, accounts);
+        return Objects.hash(getFirstName(), getLastName(), getId(), getAccounts());
+    }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", id=" + id +
+                '}';
     }
 
     public String getFirstName() {
@@ -48,18 +73,11 @@ public class Client {
         this.lastName = lastName;
     }
 
-    public Client(int id, String firstName, String lastName, ArrayList<Account> accounts) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.id = id;
-        this.accounts = accounts;
-    }
-
     public int getId() {
         return id;
     }
 
-    public ArrayList<Account> getAccounts() {
+    public ArrayList<Integer> getAccounts() {
         return accounts;
     }
 
@@ -67,11 +85,11 @@ public class Client {
         this.id = id;
     }
 
-    public void setAccounts(ArrayList<Account> accounts) {
+    public void setAccounts(ArrayList<Integer> accounts) {
         this.accounts = accounts;
     }
 
-    public void addAccount(Account account) {
-        accounts.add(account);
+    public void addAccount(Integer accountId) {
+        accounts.add(accountId);
     }
 }
