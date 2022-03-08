@@ -32,11 +32,11 @@ public class BankService {
 
         return client;
     }
-
+/*
     public Client updateClientWithId(String id) {
         int client_id = Integer.parseInt(id);
 
         return this.bankDao.updateClientWithId(client_id);
     }
-
+*/
 }

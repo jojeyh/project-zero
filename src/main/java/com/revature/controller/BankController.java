@@ -36,18 +36,20 @@ public class BankController implements Controller {
             ctx.status(404);
         }
     };
-
+/*
     public Handler updateClientWithId = ctx -> {
         JSONObject obj = newJSONObject(ctx.body());
         Client client = this.bankService.updateClientWithid(ctx.pathParam("client_id"));
         ctx.json(client);
     };
 
+ */
+
     @Override
     public void mapEndpoints(Javalin app) {
         app.post("/clients", createClient);
         app.get("/clients", getAllClients);
         app.get("/clients/{client_id}", getClientWithId);
-        app.put("/clients/{client_id}", updateClientWithId);
+        //app.put("/clients/{client_id}", updateClientWithId);
     }
 }

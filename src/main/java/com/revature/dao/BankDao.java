@@ -120,6 +120,7 @@ public class BankDao {
         return null;
     } // getClientWithId
 
+    /*
     public Client updateClientWithId(int client_id) {
         try (Connection conn = ConnectionUtility.getConnection()) {
             String query = UPDATE clients SET firstName
@@ -128,5 +129,6 @@ public class BankDao {
         }
         return null;
     }
+     */
 
 }
