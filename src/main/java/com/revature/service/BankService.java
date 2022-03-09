@@ -2,6 +2,7 @@ package com.revature.service;
 
 import com.revature.dao.BankDao;
 import com.revature.exception.ClientNotFoundException;
+import com.revature.exception.WrongIdException;
 import com.revature.model.Client;
 
 import java.util.List;
@@ -13,8 +14,8 @@ public class BankService {
         this.bankDao = new BankDao();
     }
 
-    public void createClient(String lastName, String firstName) {
-        bankDao.createClient(lastName, firstName);
+    public Client createClient(Client client) {
+        return bankDao.createClient(client);
     }
 
     public List<Client> getAllClients() {
@@ -32,11 +33,17 @@ public class BankService {
 
         return client;
     }
-/*
-    public Client updateClientWithId(String id) {
-        int client_id = Integer.parseInt(id);
 
-        return this.bankDao.updateClientWithId(client_id);
+    // TODO Update this to include exception where ID not found, or create a new client possibly
+    public Client updateClientWithId(Client client, Integer clientId) throws WrongIdException {
+        if (client.getId() != clientId) {
+            throw new WrongIdException("Cannot change a client's ID.  Either create a new record or update with same ID");
+        } else {
+            return this.bankDao.updateClientWithId(client);
+        }
     }
-*/
+
+    public void deleteClientWithId(String client_id) {
+        this.bankDao.deleteClientWithId(client_id);
+    }
 }
