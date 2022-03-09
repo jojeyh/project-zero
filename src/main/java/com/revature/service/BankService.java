@@ -3,6 +3,7 @@ package com.revature.service;
 import com.revature.dao.BankDao;
 import com.revature.exception.ClientNotFoundException;
 import com.revature.exception.WrongIdException;
+import com.revature.model.Account;
 import com.revature.model.Client;
 
 import java.util.List;
@@ -45,5 +46,13 @@ public class BankService {
 
     public void deleteClientWithId(String client_id) {
         this.bankDao.deleteClientWithId(client_id);
+    }
+
+    public Account addAccountById(Account account) {
+        return this.bankDao.addAccountById(account);
+    }
+
+    public List<Account> getAllClientAccounts(Integer client_id) {
+        return this.bankDao.getAllClientAccounts(client_id);
     }
 }

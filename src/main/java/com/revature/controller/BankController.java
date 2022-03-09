@@ -3,6 +3,7 @@ package com.revature.controller;
 import com.google.gson.Gson;
 import com.revature.exception.ClientNotFoundException;
 import com.revature.exception.WrongIdException;
+import com.revature.model.Account;
 import com.revature.model.Client;
 import com.revature.service.BankService;
 import io.javalin.Javalin;
@@ -64,6 +65,23 @@ public class BankController implements Controller {
         this.bankService.deleteClientWithId(ctx.pathParam("client_id"));
     };
 
+    public Handler addAccountById = ctx -> {
+        Gson gson = new Gson();
+        Account account = gson.fromJson(ctx.body(), Account.class);
+        account.setClientId(Integer.parseInt(ctx.pathParam("client_id")));
+        account = this.bankService.addAccountById(account);
+        ctx.json(account);
+        ctx.status(200); // TODO is this correct?
+    };
+
+    public Handler getAllClientAccounts = ctx -> {
+        List<Account> accounts = this.bankService.getAllClientAccounts(
+                Integer.parseInt(ctx.pathParam("client_id"))
+        );
+        ctx.json(accounts);
+        ctx.status(200); // TODO is this correct?
+    };
+
     @Override
     public void mapEndpoints(Javalin app) {
         app.post("/clients", createClient);
@@ -71,5 +89,7 @@ public class BankController implements Controller {
         app.get("/clients/{client_id}", getClientWithId);
         app.put("/clients/{client_id}", updateClientWithId);
         app.delete("/clients/{client_id}", deleteClientWithId);
+        app.post("/clients/{client_id}/accounts", addAccountById);
+        app.get("/clients/{client_id}/accounts", getAllClientAccounts);
     }
 }
