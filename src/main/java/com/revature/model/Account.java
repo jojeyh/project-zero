@@ -10,7 +10,7 @@ public class Account {
 
     public enum AccountType {
         CHECKING,
-        SAVINGS;
+        SAVINGS
     }
 
     public Account(int balance, int id, int clientId, AccountType accountType) {

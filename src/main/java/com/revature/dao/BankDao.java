@@ -348,4 +348,31 @@ public class BankDao {
         }
         return null;
     }
+
+    public Account updateClientAccount(Account updatedAccount) {
+        try (Connection conn = ConnectionUtility.getConnection()) {
+            String query = "UPDATE accounts SET type=?, balance=? WHERE id=?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(3, updatedAccount.getId());
+            stmt.setInt(2, updatedAccount.getBalance());
+            switch (updatedAccount.getAccountType()) {
+                case CHECKING:
+                    stmt.setString(1, "C");
+                    break;
+                case SAVINGS:
+                    stmt.setString(1, "S");
+                    break;
+                default:
+                    System.out.println("Invalid account type entered.");
+                    return null;
+            }
+            if (stmt.executeUpdate() == 1) {
+                System.out.println("Client account successfully updated.");
+                return updatedAccount;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

@@ -49,7 +49,6 @@ public class BankController implements Controller {
 
     public Handler updateClientWithId = ctx -> {
         try {
-            // TODO Use ctx.bodyAsClass() instead Gson
             Gson gson = new Gson();
             Client client = gson.fromJson(ctx.body(), Client.class);
             client = this.bankService.updateClientWithId(client, Integer.parseInt(ctx.pathParam("client_id")));
@@ -99,6 +98,12 @@ public class BankController implements Controller {
         ctx.json(account);
     };
 
+    public Handler updateClientAccount = ctx -> {
+        Gson gson = new Gson();
+        Account updatedAccount = gson.fromJson(ctx.body(), Account.class);
+        ctx.json(this.bankService.updateClientAccount(updatedAccount));
+    };
+
     @Override
     public void mapEndpoints(Javalin app) {
         app.post("/clients", createClient);
@@ -109,5 +114,6 @@ public class BankController implements Controller {
         app.post("/clients/{client_id}/accounts", addAccountById);
         app.get("/clients/{client_id}/accounts", getAllClientAccounts);
         app.get("/clients/{client_id}/accounts/{account_id}", getAccountById);
+        app.post("/clients/{client_id}/accounts/{account_id}", updateClientAccount);
     }
 }

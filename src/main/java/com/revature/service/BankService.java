@@ -65,4 +65,8 @@ public class BankService {
     public Account getAccountById(Integer accountId) {
         return this.bankDao.getAccountById(accountId);
     }
+
+    public Object updateClientAccount(Account updatedAccount) {
+        return this.bankDao.updateClientAccount(updatedAccount);
+    }
 }
