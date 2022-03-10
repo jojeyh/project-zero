@@ -62,32 +62,6 @@ public class BankDao {
                 Integer[] accountIds = (Integer[]) arr.getArray();
                 ArrayList<Integer> ids = new ArrayList<>(Arrays.asList(accountIds));
                 client.setAccounts(ids);
-                /*
-
-                This code will be used later for updating accounts
-
-                for (int i=0; i < ids.length; i++) {
-                    String accountQuery = "SELECT * FROM accounts WHERE id=" + accountIds[i];
-                    PreparedStatement accountStmt = conn.prepareStatement(accountQuery);
-                    ResultSet accountRs = accountStmt.executeQuery();
-                    accountRs.next();
-                    Account account = new Account(
-                            accountRs.getInt("balance"),
-                            accountRs.getInt("id")
-                    );
-                    switch (accountRs.getString("type")) {
-                        case "C":
-                            account.setAccountType(Account.AccountType.CHECKING);
-                            break;
-                        case "S":
-                            account.setAccountType(Account.AccountType.SAVINGS);
-                            break;
-                        default:
-                            break;
-                    }
-                    //client.addAccount(account);
-                }
-                 */
                 arr.free();
                 clients.add(client);
             } // while
@@ -114,30 +88,6 @@ public class BankDao {
                 Integer[] accountIds = (Integer[]) arr.getArray();
                 ArrayList<Integer> ids = new ArrayList<>(Arrays.asList(accountIds));
                 client.setAccounts(ids);
-                /*
-                for (int i = 0; i < accountIds.length; i++) {
-                    String accountQuery = "SELECT * FROM accounts WHERE id=" + accountIds[i];
-                    PreparedStatement accountStmt = conn.prepareStatement(accountQuery);
-                    ResultSet accountRs = accountStmt.executeQuery();
-                    accountRs.next();
-                    Account account = new Account(
-                            accountRs.getInt("balance"),
-                            accountRs.getInt("id")
-                    );
-                    switch (accountRs.getString("type")) {
-                        case "C":
-                            account.setAccountType(Account.AccountType.CHECKING);
-                            break;
-                        case "S":
-                            account.setAccountType(Account.AccountType.SAVINGS);
-                            break;
-                        default:
-                            break;
-                    }
-                    //client.addAccount(account);
-                }
-
-                 */
                 arr.free();
                 return client;
             }
@@ -195,10 +145,10 @@ public class BankDao {
             stmt.setInt(2, account.getClientId());
             switch (account.getAccountType()) {
                 case CHECKING:
-                    stmt.setString(3, "C");
+                    stmt.setString(3, "CHECKING");
                     break;
                 case SAVINGS:
-                    stmt.setString(3, "S");
+                    stmt.setString(3, "SAVINGS");
                     break;
             }
             if (stmt.executeUpdate() == 1) {
@@ -244,23 +194,13 @@ public class BankDao {
                     PreparedStatement fstmt = conn.prepareStatement(fquery);
                     fstmt.setInt(1, accountId);
                     ResultSet frs = fstmt.executeQuery();
-                    Account account = new Account();
                     if (frs.next()) {
-                        switch (frs.getString("type")) {
-                            case "C":
-                                account.setAccountType(Account.AccountType.CHECKING);
-                                break;
-                            case "S":
-                                account.setAccountType(Account.AccountType.SAVINGS);
-                                break;
-                            default:
-                                System.out.println("Incorrect/invalid type given. Exiting.");
-                                return null;
-                        }
-                        account.setBalance(frs.getInt("balance"));
-                        account.setClientId(frs.getInt("clientId"));
-                        account.setId(frs.getInt("id"));
-                        accounts.add(account);
+                        accounts.add(new Account(
+                                frs.getInt("balance"),
+                                frs.getInt("id"),
+                                frs.getInt("clientId"),
+                                Account.AccountType.valueOf(frs.getString("type"))
+                        ));
                     } // if
                 } // for
                 return accounts;
@@ -289,23 +229,13 @@ public class BankDao {
                     fstmt.setInt(2, amountGreaterThan);
                     fstmt.setInt(3, amountLessThan);
                     ResultSet frs = fstmt.executeQuery();
-                    Account account = new Account();
                     if (frs.next()) {
-                        switch (frs.getString("type")) {
-                            case "C":
-                                account.setAccountType(Account.AccountType.CHECKING);
-                                break;
-                            case "S":
-                                account.setAccountType(Account.AccountType.SAVINGS);
-                                break;
-                            default:
-                                System.out.println("Incorrect/invalid type given. Exiting.");
-                                return null;
-                        }
-                        account.setBalance(frs.getInt("balance"));
-                        account.setClientId(frs.getInt("clientId"));
-                        account.setId(frs.getInt("id"));
-                        accounts.add(account);
+                        accounts.add(new Account(
+                                frs.getInt("balance"),
+                                frs.getInt("id"),
+                                frs.getInt("clientId"),
+                                Account.AccountType.valueOf(frs.getString("type"))
+                        ));
                     } // if
                 } // for
                 return accounts;
@@ -315,30 +245,19 @@ public class BankDao {
         }
         return null;
     }
-
-    public Account getAccountById(Integer accountId) {
+public Account getAccountById(Integer accountId) {
         try (Connection conn = ConnectionUtility.getConnection()) {
             String query = "SELECT * FROM accounts WHERE id=?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, accountId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                Account account = new Account();
-                switch (rs.getString("type")) {
-                    case "C":
-                        account.setAccountType(Account.AccountType.CHECKING);
-                        break;
-                    case "S":
-                        account.setAccountType(Account.AccountType.SAVINGS);
-                        break;
-                    default:
-                        System.out.println("Incorrect/invalid type given. Exiting.");
-                        return null;
-                }
-                account.setBalance(rs.getInt("balance"));
-                account.setClientId(rs.getInt("clientId"));
-                account.setId(rs.getInt("id"));
-                return account;
+                return new Account(
+                    rs.getInt("balance"),
+                    rs.getInt("id"),
+                    rs.getInt("clientId"),
+                    Account.AccountType.valueOf(rs.getString("type"))
+                );
             } else {
                 return null;
             }
@@ -355,17 +274,7 @@ public class BankDao {
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(3, updatedAccount.getId());
             stmt.setInt(2, updatedAccount.getBalance());
-            switch (updatedAccount.getAccountType()) {
-                case CHECKING:
-                    stmt.setString(1, "C");
-                    break;
-                case SAVINGS:
-                    stmt.setString(1, "S");
-                    break;
-                default:
-                    System.out.println("Invalid account type entered.");
-                    return null;
-            }
+            stmt.setString(1, updatedAccount.getAccountType().name());
             if (stmt.executeUpdate() == 1) {
                 System.out.println("Client account successfully updated.");
                 return updatedAccount;
