@@ -93,6 +93,12 @@ public class BankController implements Controller {
         ctx.status(200); // TODO is this correct?
     };
 
+    public Handler getAccountById = ctx -> {
+        Integer accountId = Integer.parseInt(ctx.pathParam("account_id"));
+        Account account = this.bankService.getAccountById(accountId);
+        ctx.json(account);
+    };
+
     @Override
     public void mapEndpoints(Javalin app) {
         app.post("/clients", createClient);
@@ -102,5 +108,6 @@ public class BankController implements Controller {
         app.delete("/clients/{client_id}", deleteClientWithId);
         app.post("/clients/{client_id}/accounts", addAccountById);
         app.get("/clients/{client_id}/accounts", getAllClientAccounts);
+        app.get("/clients/{client_id}/accounts/{account_id}", getAccountById);
     }
 }

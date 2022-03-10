@@ -315,4 +315,37 @@ public class BankDao {
         }
         return null;
     }
+
+    public Account getAccountById(Integer accountId) {
+        try (Connection conn = ConnectionUtility.getConnection()) {
+            String query = "SELECT * FROM accounts WHERE id=?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, accountId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                Account account = new Account();
+                switch (rs.getString("type")) {
+                    case "C":
+                        account.setAccountType(Account.AccountType.CHECKING);
+                        break;
+                    case "S":
+                        account.setAccountType(Account.AccountType.SAVINGS);
+                        break;
+                    default:
+                        System.out.println("Incorrect/invalid type given. Exiting.");
+                        return null;
+                }
+                account.setBalance(rs.getInt("balance"));
+                account.setClientId(rs.getInt("clientId"));
+                account.setId(rs.getInt("id"));
+                return account;
+            } else {
+                return null;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

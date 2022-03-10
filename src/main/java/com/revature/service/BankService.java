@@ -61,4 +61,8 @@ public class BankService {
     public List<Account> getAllClientAccountsInBetween(Integer client_id, Integer amountLessThan, Integer amountGreaterThan) {
         return this.bankDao.getAllClientAccountsInBetween(client_id, amountLessThan, amountGreaterThan);
     }
+
+    public Account getAccountById(Integer accountId) {
+        return this.bankDao.getAccountById(accountId);
+    }
 }
