@@ -66,7 +66,11 @@ public class BankService {
         return this.bankDao.getAccountById(accountId);
     }
 
+    // TODO Change this return Object to Account
     public Object updateClientAccount(Account updatedAccount) {
         return this.bankDao.updateClientAccount(updatedAccount);
+    }
+    public void deleteAccount(Integer accountId) {
+        this.bankDao.deleteAccount(accountId);
     }
 }

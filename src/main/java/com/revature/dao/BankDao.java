@@ -375,4 +375,19 @@ public class BankDao {
         }
         return null;
     }
+
+    public void deleteAccount(Integer accountId) {
+        try (Connection conn = ConnectionUtility.getConnection()) {
+            String query = "DELETE FROM accounts WHERE id=?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, accountId);
+            if (stmt.executeUpdate() == 1) {
+                System.out.println("Successfully deleted account");
+            } else {
+                System.out.println("Could not delete account or does not exist");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
