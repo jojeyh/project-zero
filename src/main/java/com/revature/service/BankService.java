@@ -44,6 +44,8 @@ public class BankService {
         }
     }
 
+    // TODO In general you need all these to be handling exception logic, handling intermediate data operations, etc
+
     public void deleteClientWithId(String client_id) {
         this.bankDao.deleteClientWithId(client_id);
     }
@@ -54,5 +56,9 @@ public class BankService {
 
     public List<Account> getAllClientAccounts(Integer client_id) {
         return this.bankDao.getAllClientAccounts(client_id);
+    }
+
+    public List<Account> getAllClientAccountsInBetween(Integer client_id, Integer amountLessThan, Integer amountGreaterThan) {
+        return this.bankDao.getAllClientAccountsInBetween(client_id, amountLessThan, amountGreaterThan);
     }
 }

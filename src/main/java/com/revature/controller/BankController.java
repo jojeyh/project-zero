@@ -10,6 +10,7 @@ import io.javalin.Javalin;
 import io.javalin.http.Handler;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BankController implements Controller {
@@ -75,9 +76,19 @@ public class BankController implements Controller {
     };
 
     public Handler getAllClientAccounts = ctx -> {
-        List<Account> accounts = this.bankService.getAllClientAccounts(
-                Integer.parseInt(ctx.pathParam("client_id"))
-        );
+        List<Account> accounts = new ArrayList<>();
+        if (!ctx.queryParamMap().isEmpty()) {
+            Integer amountLessThan = Integer.parseInt(ctx.queryParam("amountLessThan"));
+            Integer amountGreaterThan = Integer.parseInt(ctx.queryParam("amountGreaterThan"));
+
+            accounts = this.bankService.getAllClientAccountsInBetween(
+                    Integer.parseInt(ctx.pathParam("client_id")),
+                    amountLessThan,
+                    amountGreaterThan
+            );
+        } else {
+            accounts = this.bankService.getAllClientAccounts(Integer.parseInt(ctx.pathParam("client_id")));
+        }
         ctx.json(accounts);
         ctx.status(200); // TODO is this correct?
     };

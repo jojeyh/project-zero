@@ -228,7 +228,6 @@ public class BankDao {
         return null;
     } // addAccountById
 
-
     public List<Account> getAllClientAccounts(Integer client_id) {
         try (Connection conn = ConnectionUtility.getConnection()) {
             // TODO This pattern String -> PreparedStatment -> Set variables -> ResultSet is very common, refactor to method
@@ -244,6 +243,51 @@ public class BankDao {
                     String fquery = "SELECT * FROM accounts WHERE id=?";
                     PreparedStatement fstmt = conn.prepareStatement(fquery);
                     fstmt.setInt(1, accountId);
+                    ResultSet frs = fstmt.executeQuery();
+                    Account account = new Account();
+                    if (frs.next()) {
+                        switch (frs.getString("type")) {
+                            case "C":
+                                account.setAccountType(Account.AccountType.CHECKING);
+                                break;
+                            case "S":
+                                account.setAccountType(Account.AccountType.SAVINGS);
+                                break;
+                            default:
+                                System.out.println("Incorrect/invalid type given. Exiting.");
+                                return null;
+                        }
+                        account.setBalance(frs.getInt("balance"));
+                        account.setClientId(frs.getInt("clientId"));
+                        account.setId(frs.getInt("id"));
+                        accounts.add(account);
+                    } // if
+                } // for
+                return accounts;
+            } // if
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<Account> getAllClientAccountsInBetween(Integer client_id, Integer amountLessThan, Integer amountGreaterThan) {
+        try (Connection conn = ConnectionUtility.getConnection()) {
+            // TODO This pattern String -> PreparedStatment -> Set variables -> ResultSet is very common, refactor to method
+            String query = "SELECT accounts FROM clients WHERE id=?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, client_id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                ArrayList<Account> accounts = new ArrayList<>();
+                Integer[] accountIds = (Integer[]) rs.getArray("accounts").getArray();
+                for (Integer accountId : accountIds) {
+                    // TODO you reallly need to refactor this shit
+                    String fquery = "SELECT * FROM accounts WHERE id=? AND balance BETWEEN ? AND ?";
+                    PreparedStatement fstmt = conn.prepareStatement(fquery);
+                    fstmt.setInt(1, accountId);
+                    fstmt.setInt(2, amountGreaterThan);
+                    fstmt.setInt(3, amountLessThan);
                     ResultSet frs = fstmt.executeQuery();
                     Account account = new Account();
                     if (frs.next()) {
