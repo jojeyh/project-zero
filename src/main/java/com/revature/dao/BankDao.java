@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class BankDao {
+    // TODO The databases in this app are not normalized to 1NF.  Should not be arrays in client tables, redo to meet 1NF
 
     public Client createClient(Client client) {
         try (Connection conn = ConnectionUtility.getConnection()) {
@@ -57,7 +58,6 @@ public class BankDao {
                         rs.getInt("id")
                         //new ArrayList<Integer>(Arrays.asList(rs.getArray("accounts")))
                 );
-                // TODO POssibly clean this casting by using something more concise/direct
                 Array arr = rs.getArray("accounts");
                 Integer[] accountIds = (Integer[]) arr.getArray();
                 ArrayList<Integer> ids = new ArrayList<>(Arrays.asList(accountIds));
