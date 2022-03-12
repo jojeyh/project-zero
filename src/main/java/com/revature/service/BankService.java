@@ -17,6 +17,9 @@ public class BankService {
 
     public Client createClient(Client client) {
         validateClientInfo(client);
+
+
+
         return bankDao.createClient(client);
     }
 
@@ -73,21 +76,17 @@ public class BankService {
         this.bankDao.deleteAccount(accountId);
     }
 
-    private boolean validateClientInfo(Client client) {
+    private void validateClientInfo(Client client) {
         client.setFirstName(client.getFirstName().trim());
         client.setLastName(client.getLastName().trim());
 
         if (!client.getFirstName().matches("[a-zA-Z]+")) {
             throw new IllegalArgumentException("First name must be alphabetical characters only");
-            return false;
         }
 
         if (!client.getLastName().matches("[a-zA-Z]+")) {
             throw new IllegalArgumentException("Last name must be alphabetical characters only.");
-            return false;
         }
-
-        return true;
     }
 
     private void validateAccountInfo(Account account) {

@@ -11,6 +11,8 @@ import java.util.List;
 public class BankDao {
     public Client createClient(Client client) {
         try (Connection conn = ConnectionUtility.getConnection()) {
+            // TODO Change this method to handle new DB structure, ie. no more account array in clients table
+            // TODO Change this to return GENERATED ID and get rid of SELECT query
             String query = "INSERT INTO clients (lastname, firstname, accounts) VALUES (?, ?, ARRAY [0])";
             PreparedStatement stmt = conn.prepareStatement(query);
 
@@ -63,6 +65,7 @@ public class BankDao {
         return null;
     }
 
+    // TODO Experiment with passing in a String client_id and see if behavior changes
     public Client getClientWithId(Integer client_id) {
         try (Connection conn = ConnectionUtility.getConnection()) {
             String query = "SELECT * FROM clients WHERE id = ?";
