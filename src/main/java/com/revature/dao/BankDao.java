@@ -6,7 +6,6 @@ import com.revature.utility.ConnectionUtility;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class BankDao {
@@ -56,13 +55,7 @@ public class BankDao {
                         rs.getString("firstname"),
                         rs.getString("lastname"),
                         rs.getInt("id")
-                        //new ArrayList<Integer>(Arrays.asList(rs.getArray("accounts")))
                 );
-                Array arr = rs.getArray("accounts");
-                Integer[] accountIds = (Integer[]) arr.getArray();
-                ArrayList<Integer> ids = new ArrayList<>(Arrays.asList(accountIds));
-                client.setAccounts(ids);
-                arr.free();
                 clients.add(client);
             } // while
             return clients;
@@ -84,11 +77,6 @@ public class BankDao {
                         rs.getString("lastname"),
                         rs.getInt("id")
                 );
-                Array arr = rs.getArray("accounts");
-                Integer[] accountIds = (Integer[]) arr.getArray();
-                ArrayList<Integer> ids = new ArrayList<>(Arrays.asList(accountIds));
-                client.setAccounts(ids);
-                arr.free();
                 return client;
             }
         } catch (SQLException e) {
@@ -104,7 +92,6 @@ public class BankDao {
             stmt.setString(1, client.getFirstName());
             stmt.setString(2, client.getLastName());
             stmt.setInt(4, client.getId());
-            stmt.setArray(3, conn.createArrayOf("int", client.getAccounts().toArray()));
 
             // TODO Change this System.out to a logging function and/or exception
             if (stmt.executeUpdate() == 1) {
@@ -152,22 +139,6 @@ public class BankDao {
                     break;
             }
             if (stmt.executeUpdate() == 1) {
-                ResultSet rs = stmt.getGeneratedKeys();
-                if (rs.next()) {
-                    account.setId(rs.getInt(1));
-                    stmt = conn.prepareStatement(
-                                "UPDATE clients SET accounts =" +
-                                    "ARRAY_APPEND(accounts, ?) WHERE id=?"
-                                    );
-                    stmt.setInt(1, account.getId());
-                    stmt.setInt(2, account.getClientId());
-                    if (stmt.executeUpdate() == 1) {
-                        System.out.println("Successfully added new account and updated client.");
-                    } else {
-                        System.out.println("Error: Could not successfully add account.");
-                        return null;
-                    }
-                }
                 return account;
             } else {
                 System.out.println("Could not update client with new account");
@@ -180,31 +151,20 @@ public class BankDao {
 
     public List<Account> getAllClientAccounts(Integer client_id) {
         try (Connection conn = ConnectionUtility.getConnection()) {
-            // TODO This pattern String -> PreparedStatment -> Set variables -> ResultSet is very common, refactor to method
-            String query = "SELECT accounts FROM clients WHERE id=?";
+            ArrayList<Account> accounts = new ArrayList<>();
+            String query = "SELECT * FROM accounts WHERE clientid=?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, client_id);
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                ArrayList<Account> accounts = new ArrayList<>();
-                Integer[] accountIds = (Integer[]) rs.getArray("accounts").getArray();
-                for (Integer accountId : accountIds) {
-                    // TODO you reallly need to refactor this shit
-                    String fquery = "SELECT * FROM accounts WHERE id=?";
-                    PreparedStatement fstmt = conn.prepareStatement(fquery);
-                    fstmt.setInt(1, accountId);
-                    ResultSet frs = fstmt.executeQuery();
-                    if (frs.next()) {
-                        accounts.add(new Account(
-                                frs.getInt("balance"),
-                                frs.getInt("id"),
-                                frs.getInt("clientId"),
-                                Account.AccountType.valueOf(frs.getString("type"))
-                        ));
-                    } // if
-                } // for
-                return accounts;
-            } // if
+            while (rs.next()) {
+                accounts.add(new Account(
+                        rs.getInt("balance"),
+                        rs.getInt("id"),
+                        rs.getInt("clientid"),
+                        Account.AccountType.valueOf(rs.getString("type"))
+                ));
+            }
+            return accounts;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -212,38 +172,17 @@ public class BankDao {
     }
 
     public List<Account> getAllClientAccountsInBetween(Integer client_id, Integer amountLessThan, Integer amountGreaterThan) {
-        try (Connection conn = ConnectionUtility.getConnection()) {
-            String query = "SELECT accounts FROM clients WHERE id=?";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setInt(1, client_id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                ArrayList<Account> accounts = new ArrayList<>();
-                Integer[] accountIds = (Integer[]) rs.getArray("accounts").getArray();
-                for (Integer accountId : accountIds) {
-                    String fquery = "SELECT * FROM accounts WHERE id=? AND balance BETWEEN ? AND ?";
-                    PreparedStatement fstmt = conn.prepareStatement(fquery);
-                    fstmt.setInt(1, accountId);
-                    fstmt.setInt(2, amountGreaterThan);
-                    fstmt.setInt(3, amountLessThan);
-                    ResultSet frs = fstmt.executeQuery();
-                    if (frs.next()) {
-                        accounts.add(new Account(
-                                frs.getInt("balance"),
-                                frs.getInt("id"),
-                                frs.getInt("clientId"),
-                                Account.AccountType.valueOf(frs.getString("type"))
-                        ));
-                    } // if
-                } // for
-                return accounts;
-            } // if
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        ArrayList<Account> accounts = (ArrayList<Account>) getAllClientAccounts(client_id);
+        ArrayList<Account> rangedAccounts = new ArrayList<>();
+        accounts.forEach(account -> {
+            if (account.getBalance() < amountLessThan && account.getBalance() > amountGreaterThan) {
+                rangedAccounts.add(account);
+            }
+        });
+        return rangedAccounts;
     }
-public Account getAccountById(Integer accountId) {
+
+    public Account getAccountById(Integer accountId) {
         try (Connection conn = ConnectionUtility.getConnection()) {
             String query = "SELECT * FROM accounts WHERE id=?";
             PreparedStatement stmt = conn.prepareStatement(query);
