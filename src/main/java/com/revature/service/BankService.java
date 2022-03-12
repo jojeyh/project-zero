@@ -16,6 +16,7 @@ public class BankService {
     }
 
     public Client createClient(Client client) {
+        validateClientInfo(client);
         return bankDao.createClient(client);
     }
 
@@ -67,7 +68,45 @@ public class BankService {
     public Object updateClientAccount(Account updatedAccount) {
         return this.bankDao.updateClientAccount(updatedAccount);
     }
+
     public void deleteAccount(Integer accountId) {
         this.bankDao.deleteAccount(accountId);
     }
+
+    private boolean validateClientInfo(Client client) {
+        client.setFirstName(client.getFirstName().trim());
+        client.setLastName(client.getLastName().trim());
+
+        if (!client.getFirstName().matches("[a-zA-Z]+")) {
+            throw new IllegalArgumentException("First name must be alphabetical characters only");
+            return false;
+        }
+
+        if (!client.getLastName().matches("[a-zA-Z]+")) {
+            throw new IllegalArgumentException("Last name must be alphabetical characters only.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void validateAccountInfo(Account account) {
+        if (account.getBalance() < 0) {
+            throw new IllegalArgumentException("Account balance must be non-negative integer");
+        }
+
+        if (!BankService.enumContains(account.getAccountType())) {
+            throw new IllegalArgumentException("Account type is not a valid type");
+        }
+    }
+
+    private static boolean enumContains(Account.AccountType e) {
+        for (Account.AccountType accountType : Account.AccountType.values()) {
+            if (accountType.equals(e)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
