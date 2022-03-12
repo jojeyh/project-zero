@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BankDao {
-    // TODO The databases in this app are not normalized to 1NF.  Should not be arrays in client tables, redo to meet 1NF
-
     public Client createClient(Client client) {
         try (Connection conn = ConnectionUtility.getConnection()) {
             String query = "INSERT INTO clients (lastname, firstname, accounts) VALUES (?, ?, ARRAY [0])";
