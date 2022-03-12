@@ -13,12 +13,13 @@ public class BankDao {
         try (Connection conn = ConnectionUtility.getConnection()) {
             // TODO Change this method to handle new DB structure, ie. no more account array in clients table
             // TODO Change this to return GENERATED ID and get rid of SELECT query
-            String query = "INSERT INTO clients (lastname, firstname, accounts) VALUES (?, ?, ARRAY [0])";
+            String query = "INSERT INTO clients (lastname, firstname) VALUES (?, ?)";
             PreparedStatement stmt = conn.prepareStatement(query);
 
             stmt.setString(1, client.getLastName());
             stmt.setString(2, client.getFirstName());
 
+            /*
             if (stmt.executeUpdate() == 1) {
                 System.out.println("Successfully inserted new client.");
                 PreparedStatement pstmt = conn.prepareStatement(
@@ -37,6 +38,7 @@ public class BankDao {
             } else {
                 System.out.println("Insertion failed.");
             }
+             */
         } catch (SQLException e) {
             System.out.println("Client creation failed: " + e.getMessage());
         }
@@ -131,14 +133,7 @@ public class BankDao {
             PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             stmt.setInt(1, account.getBalance());
             stmt.setInt(2, account.getClientId());
-            switch (account.getAccountType()) {
-                case CHECKING:
-                    stmt.setString(3, "CHECKING");
-                    break;
-                case SAVINGS:
-                    stmt.setString(3, "SAVINGS");
-                    break;
-            }
+            stmt.setString(3, account.getAccountType().name());
             if (stmt.executeUpdate() == 1) {
                 return account;
             } else {
