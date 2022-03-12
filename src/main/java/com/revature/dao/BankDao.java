@@ -296,5 +296,5 @@ public Account getAccountById(Integer accountId) {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-}
+    } // deleteAccount
+} // class BankDao
