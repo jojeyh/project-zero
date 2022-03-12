@@ -13,8 +13,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO Change DB values of AccountType to use ENUM directly with postgresql
-
 public class BankController implements Controller {
     private BankService bankService;
 
@@ -107,7 +105,6 @@ public class BankController implements Controller {
     };
 
     public Handler deleteAccount = ctx -> {
-        // TODO Check that clientID matches the accountID
         Integer accountId = Integer.parseInt(ctx.pathParam("account_id"));
         this.bankService.deleteAccount(accountId);
     };

@@ -35,7 +35,6 @@ public class BankService {
         return client;
     }
 
-    // TODO Update this to include exception where ID not found, or create a new client possibly
     public Client updateClientWithId(Client client, Integer clientId) throws WrongIdException {
         if (client.getId() != clientId) {
             throw new WrongIdException("Cannot change a client's ID.  Either create a new record or update with same ID");
@@ -43,8 +42,6 @@ public class BankService {
             return this.bankDao.updateClientWithId(client);
         }
     }
-
-    // TODO In general you need all these to be handling exception logic, handling intermediate data operations, etc
 
     public void deleteClientWithId(String client_id) {
         this.bankDao.deleteClientWithId(client_id);

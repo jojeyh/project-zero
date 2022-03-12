@@ -213,7 +213,6 @@ public class BankDao {
 
     public List<Account> getAllClientAccountsInBetween(Integer client_id, Integer amountLessThan, Integer amountGreaterThan) {
         try (Connection conn = ConnectionUtility.getConnection()) {
-            // TODO This pattern String -> PreparedStatment -> Set variables -> ResultSet is very common, refactor to method
             String query = "SELECT accounts FROM clients WHERE id=?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, client_id);
@@ -222,7 +221,6 @@ public class BankDao {
                 ArrayList<Account> accounts = new ArrayList<>();
                 Integer[] accountIds = (Integer[]) rs.getArray("accounts").getArray();
                 for (Integer accountId : accountIds) {
-                    // TODO you reallly need to refactor this shit
                     String fquery = "SELECT * FROM accounts WHERE id=? AND balance BETWEEN ? AND ?";
                     PreparedStatement fstmt = conn.prepareStatement(fquery);
                     fstmt.setInt(1, accountId);
