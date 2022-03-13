@@ -25,7 +25,7 @@ public class BankService {
         this.bankDao = mockedDao;
     }
 
-    public int createClient(Client client) {
+    public int createClient(Client client) throws IllegalArgumentException {
         validateClientInfo(client);
         return bankDao.createClient(client);
     }
