@@ -21,6 +21,10 @@ public class BankService {
         this.bankDao = new BankDao();
     }
 
+    public BankService(BankDao mockedDao) {
+        this.bankDao = mockedDao;
+    }
+
     public int createClient(Client client) {
         validateClientInfo(client);
         return bankDao.createClient(client);
@@ -31,15 +35,19 @@ public class BankService {
     }
 
     public Client getClientWithId(String id) throws ClientNotFoundException {
-        int client_id = Integer.parseInt(id);
+        try {
+            int client_id = Integer.parseInt(id);
 
-        Client client = this.bankDao.getClientWithId(client_id);
+            Client client = this.bankDao.getClientWithId(client_id);
 
-        if (client == null) {
-            throw new ClientNotFoundException("Client with id: " + id + " was not found.");
+            if (client == null) {
+                throw new ClientNotFoundException("Client with id: " + id + " was not found.");
+            }
+
+            return client;
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Id provided must be a valid int");
         }
-
-        return client;
     }
 
     public Client updateClientWithId(Client client, Integer clientId) throws WrongIdException {
