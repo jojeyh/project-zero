@@ -153,7 +153,7 @@ public class BankDao {
                         Account.AccountType.valueOf(rs.getString("type"))
                 ));
             }
-            logger.info("All accounts for Client " + client_id " retrieved");
+            logger.info("All accounts for Client " + client_id + " retrieved");
             return accounts;
         } catch (SQLException e) {
             logger.debug(e.getMessage());
