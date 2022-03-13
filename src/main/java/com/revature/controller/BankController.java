@@ -27,10 +27,8 @@ public class BankController implements Controller {
                 obj.getString("lastname")
         ));
         if (id > 0) {
-            System.out.println("Client successfully created with an id of " + id);
             ctx.result("Client successfully created with an id of " + id);
         } else {
-            System.out.println("Client could not be created.");
             ctx.result("Client could not be created");
         }
     };

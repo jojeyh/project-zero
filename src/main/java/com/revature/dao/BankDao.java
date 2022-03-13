@@ -3,15 +3,19 @@ package com.revature.dao;
 import com.revature.model.Account;
 import com.revature.model.Client;
 import com.revature.utility.ConnectionUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BankDao {
+
+    private static Logger logger = LoggerFactory.getLogger(BankDao.class);
+
     public int createClient(Client client) {
         try (Connection conn = ConnectionUtility.getConnection()) {
-            // TODO Change this to return GENERATED ID and get rid of SELECT query
             String query = "INSERT INTO clients (lastname, firstname) VALUES (?, ?)";
             PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
@@ -22,11 +26,11 @@ public class BankDao {
             if (stmt.executeUpdate() == 1) {
                 ResultSet rs = stmt.getGeneratedKeys();
                 if (rs.next()) {
-                    System.out.println("New client successfully created with id of " + rs.getLong(1));
+                    logger.info("New client successfully created with id of " + rs.getInt(1));
                     return rs.getInt(1);
                 }
             } else {
-                System.out.println("Insertion failed.");
+                logger.debug("Insertion of new client failed");
                 return 0;
             }
         } catch (SQLException e) {
@@ -52,12 +56,12 @@ public class BankDao {
             } // while
             return clients;
         } catch (SQLException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
         return null;
     }
 
-    // TODO Experiment with passing in a String client_id and see if behavior changes
     public Client getClientWithId(Integer client_id) {
         try (Connection conn = ConnectionUtility.getConnection()) {
             String query = "SELECT * FROM clients WHERE id = ?";
@@ -73,6 +77,7 @@ public class BankDao {
                 return client;
             }
         } catch (SQLException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
         return null;
@@ -86,14 +91,12 @@ public class BankDao {
             stmt.setString(2, client.getLastName());
             stmt.setInt(4, client.getId());
 
-            // TODO Change this System.out to a logging function and/or exception
             if (stmt.executeUpdate() == 1) {
-                System.out.println("Client successfully updated.");
+                logger.info("Client with id " + client.getId() + " info changed.");
                 return client;
-            } else {
-                System.out.println("Client not updated.");
             }
         } catch (SQLException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
         return null;
@@ -105,14 +108,13 @@ public class BankDao {
             String query = "DELETE FROM clients WHERE id=?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, id);
-            // TODO change print to log
+
             if (stmt.executeUpdate()==1) {
-                System.out.println("Client successfully deleted.");
-            } else {
-                System.out.println("Client not deleted or did not exist.");
+                logger.info("Deleted client with ID " + clientId);
             }
 
         } catch (SQLException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -126,13 +128,11 @@ public class BankDao {
             stmt.setString(3, account.getAccountType().name());
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
-                System.out.println("Successfully inserted account with generated ID " + rs.getInt(1));
+                logger.info("Added account " + rs.getInt(1) + "to client " + account.getClientId());
                 return true;
-            } else {
-                System.out.println("Could not update client with new account");
-                return false;
             }
         } catch (SQLException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
         return false;
@@ -153,8 +153,10 @@ public class BankDao {
                         Account.AccountType.valueOf(rs.getString("type"))
                 ));
             }
+            logger.info("All accounts for Client " + client_id " retrieved");
             return accounts;
         } catch (SQLException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
         return null;
@@ -168,6 +170,8 @@ public class BankDao {
                 rangedAccounts.add(account);
             }
         });
+        logger.info("All accounts between " + amountGreaterThan + " & " + amountLessThan +
+                " for Client " + client_id + " retrieved");
         return rangedAccounts;
     }
 
@@ -178,17 +182,17 @@ public class BankDao {
             stmt.setInt(1, accountId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
+                logger.info("Account " + rs.getInt("id") + " info retrieved.");
                 return new Account(
                     rs.getInt("balance"),
                     rs.getInt("id"),
                     rs.getInt("clientId"),
                     Account.AccountType.valueOf(rs.getString("type"))
                 );
-            } else {
-                return null;
             }
 
         } catch (SQLException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
         return null;
@@ -202,10 +206,12 @@ public class BankDao {
             stmt.setInt(2, updatedAccount.getBalance());
             stmt.setString(1, updatedAccount.getAccountType().name());
             if (stmt.executeUpdate() == 1) {
-                System.out.println("Client account successfully updated.");
+                logger.info("Account " + updatedAccount.getId() +
+                        " with Client " + updatedAccount.getClientId());
                 return updatedAccount;
             }
         } catch (SQLException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
         return null;
@@ -217,11 +223,10 @@ public class BankDao {
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, accountId);
             if (stmt.executeUpdate() == 1) {
-                System.out.println("Successfully deleted account");
-            } else {
-                System.out.println("Could not delete account or does not exist");
+                logger.info("Deleted Account " + accountId);
             }
         } catch (SQLException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
     } // deleteAccount
