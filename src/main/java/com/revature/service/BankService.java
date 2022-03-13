@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+// TODO Add exceptions and error checking in this layer, check each method to handle any edge cases or incorrect info
+
 public class BankService {
     private static Logger logger = LoggerFactory.getLogger(BankService.class);
 
@@ -68,8 +70,7 @@ public class BankService {
         return this.bankDao.getAccountById(accountId);
     }
 
-    // TODO Change this return Object to Account
-    public Object updateClientAccount(Account updatedAccount) {
+    public Account updateClientAccount(Account updatedAccount) {
         return this.bankDao.updateClientAccount(updatedAccount);
     }
 

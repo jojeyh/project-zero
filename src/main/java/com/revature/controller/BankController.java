@@ -19,7 +19,6 @@ public class BankController implements Controller {
         this.bankService = new BankService();
     }
 
-    // TODO Change JSONobjecto to gson
     public Handler createClient = (ctx) -> {
         JSONObject obj = new JSONObject(ctx.body());
         Integer id = this.bankService.createClient(new Client(
@@ -67,10 +66,10 @@ public class BankController implements Controller {
         account.setClientId(Integer.parseInt(ctx.pathParam("client_id")));
         if (this.bankService.addAccountById(account)) {
             ctx.result("Account added successfully");
-            ctx.status(202);
+            ctx.status(200); // OK
         } else {
             ctx.result("Account could not be added");
-            // TODO add error ctx.status
+            ctx.status(400); // Bad request
         }
     };
 
@@ -89,7 +88,7 @@ public class BankController implements Controller {
             accounts = this.bankService.getAllClientAccounts(Integer.parseInt(ctx.pathParam("client_id")));
         }
         ctx.json(accounts);
-        ctx.status(200); // TODO is this correct?
+        ctx.status(200); // OK
     };
 
     public Handler getAccountById = ctx -> {
