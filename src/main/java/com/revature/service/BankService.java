@@ -5,10 +5,14 @@ import com.revature.exception.ClientNotFoundException;
 import com.revature.exception.WrongIdException;
 import com.revature.model.Account;
 import com.revature.model.Client;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class BankService {
+    private static Logger logger = LoggerFactory.getLogger(BankService.class);
+
     private final BankDao bankDao;
 
     public BankService() {

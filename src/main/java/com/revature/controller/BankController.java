@@ -1,7 +1,6 @@
 package com.revature.controller;
 
 import com.google.gson.Gson;
-import com.revature.exception.ClientNotFoundException;
 import com.revature.exception.WrongIdException;
 import com.revature.model.Account;
 import com.revature.model.Client;
@@ -42,15 +41,8 @@ public class BankController implements Controller {
     };
 
     public Handler getClientWithId = ctx -> {
-        try {
-            Client client = this.bankService.getClientWithId(ctx.pathParam("client_id"));
-            ctx.json(client);
-            ctx.status(200);
-        } catch(ClientNotFoundException e) {
-            String err = e.getMessage();
-            ctx.json(e);
-            ctx.status(404);
-        }
+        Client client = this.bankService.getClientWithId(ctx.pathParam("client_id"));
+        ctx.json(client);
     };
 
     public Handler updateClientWithId = ctx -> {
