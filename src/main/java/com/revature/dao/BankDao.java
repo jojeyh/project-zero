@@ -9,40 +9,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BankDao {
-    public Client createClient(Client client) {
+    public int createClient(Client client) {
         try (Connection conn = ConnectionUtility.getConnection()) {
-            // TODO Change this method to handle new DB structure, ie. no more account array in clients table
             // TODO Change this to return GENERATED ID and get rid of SELECT query
             String query = "INSERT INTO clients (lastname, firstname) VALUES (?, ?)";
-            PreparedStatement stmt = conn.prepareStatement(query);
+            PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
             stmt.setString(1, client.getLastName());
             stmt.setString(2, client.getFirstName());
 
-            /*
+
             if (stmt.executeUpdate() == 1) {
-                System.out.println("Successfully inserted new client.");
-                PreparedStatement pstmt = conn.prepareStatement(
-                        "SELECT * FROM clients WHERE lastname=? AND firstname=?"
-                );
-                pstmt.setString(1, client.getLastName());
-                pstmt.setString(2, client.getFirstName());
-                ResultSet rs = pstmt.executeQuery();
+                ResultSet rs = stmt.getGeneratedKeys();
                 if (rs.next()) {
-                    return new Client(
-                            rs.getString("firstname"),
-                            rs.getString("lastname"),
-                            rs.getInt("id")
-                    );
+                    System.out.println("New client successfully created with id of " + rs.getLong(1));
+                    return rs.getInt(1);
                 }
             } else {
                 System.out.println("Insertion failed.");
+                return 0;
             }
-             */
         } catch (SQLException e) {
             System.out.println("Client creation failed: " + e.getMessage());
         }
-        return null;
+        return 0;
     }
 
     public List<Client> getAllClients() {
@@ -127,22 +117,25 @@ public class BankDao {
         }
     }
 
-    public Account addAccountById(Account account) {
+    public boolean addAccountById(Account account) {
         try (Connection conn = ConnectionUtility.getConnection()) {
             String query = "INSERT INTO accounts (balance, clientid, type) VALUES (?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             stmt.setInt(1, account.getBalance());
             stmt.setInt(2, account.getClientId());
             stmt.setString(3, account.getAccountType().name());
-            if (stmt.executeUpdate() == 1) {
-                return account;
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                System.out.println("Successfully inserted account with generated ID " + rs.getInt(1));
+                return true;
             } else {
                 System.out.println("Could not update client with new account");
+                return false;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return false;
     } // addAccountById
 
     public List<Account> getAllClientAccounts(Integer client_id) {

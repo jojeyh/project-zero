@@ -15,11 +15,8 @@ public class BankService {
         this.bankDao = new BankDao();
     }
 
-    public Client createClient(Client client) {
+    public int createClient(Client client) {
         validateClientInfo(client);
-
-
-
         return bankDao.createClient(client);
     }
 
@@ -51,7 +48,7 @@ public class BankService {
         this.bankDao.deleteClientWithId(client_id);
     }
 
-    public Account addAccountById(Account account) {
+    public boolean addAccountById(Account account) {
         return this.bankDao.addAccountById(account);
     }
 

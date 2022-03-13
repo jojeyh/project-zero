@@ -20,14 +20,20 @@ public class BankController implements Controller {
         this.bankService = new BankService();
     }
 
+    // TODO Change JSONobjecto to gson
     public Handler createClient = (ctx) -> {
         JSONObject obj = new JSONObject(ctx.body());
-        Client client = this.bankService.createClient(new Client(
+        Integer id = this.bankService.createClient(new Client(
                 obj.getString("firstname"),
                 obj.getString("lastname")
-                )
-        );
-        ctx.json(client);
+        ));
+        if (id > 0) {
+            System.out.println("Client successfully created with an id of " + id);
+            ctx.result("Client successfully created with an id of " + id);
+        } else {
+            System.out.println("Client could not be created.");
+            ctx.result("Client could not be created");
+        }
     };
 
     public Handler getAllClients = ctx -> {
@@ -69,9 +75,13 @@ public class BankController implements Controller {
         Gson gson = new Gson();
         Account account = gson.fromJson(ctx.body(), Account.class);
         account.setClientId(Integer.parseInt(ctx.pathParam("client_id")));
-        account = this.bankService.addAccountById(account);
-        ctx.json(account);
-        ctx.status(200); // TODO is this correct?
+        if (this.bankService.addAccountById(account)) {
+            ctx.result("Account added successfully");
+            ctx.status(202);
+        } else {
+            ctx.result("Account could not be added");
+            // TODO add error ctx.status
+        }
     };
 
     public Handler getAllClientAccounts = ctx -> {
