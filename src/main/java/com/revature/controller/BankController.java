@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO Add ctx.status to all Handlers
 public class BankController implements Controller {
     private BankService bankService;
 
@@ -57,7 +58,14 @@ public class BankController implements Controller {
     };
 
     public Handler deleteClientWithId = ctx -> {
-        Integer ok = this.bankService.deleteClientWithId(ctx.pathParam("client_id"));
+        Boolean ok = this.bankService.deleteClientWithId(ctx.pathParam("client_id"));
+        if (ok) {
+            ctx.result("Client deleted");
+            ctx.status(200);
+        } else {
+            ctx.result("Client could not be deleted");
+            ctx.status(404);
+        }
     };
 
     public Handler addAccountById = ctx -> {

@@ -91,7 +91,7 @@ public class BankServiceTest {
     }
 
     @Test
-    public void test_getStudentById_invalidID() throws SQLException, ClientNotFoundException {
+    public void test_getClientById_invalidID() throws SQLException, ClientNotFoundException {
         try {
             bankService.getClientWithId("abc");
             fail();
@@ -128,10 +128,10 @@ public class BankServiceTest {
 
     @Test
     public void test_deleteClientWithId_positiveTest() {
-        when(mockDao.deleteClientWithId(anyInt())).thenReturn(1);
+        when(mockDao.deleteClientWithId(anyInt())).thenReturn(true);
 
-        Integer actual = bankService.deleteClientWithId("2");
-        Integer expected = 1;
+        Boolean actual = bankService.deleteClientWithId("2");
+        Boolean expected = true;
 
         Assertions.assertEquals(actual, expected);
     }
@@ -140,11 +140,13 @@ public class BankServiceTest {
     public void test_deleteClientWithId_invalidID() {
         try {
             bankService.deleteClientWithId("AAA");
-        } catch (NumberFormatException e) {
+            fail();
+        } catch (IllegalArgumentException e) {
             String expected = "Invalid ID entered";
             String actual = e.getMessage();
 
             Assertions.assertEquals(expected, actual);
         }
     }
+
 }

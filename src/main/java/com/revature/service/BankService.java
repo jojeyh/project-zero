@@ -64,13 +64,14 @@ public class BankService {
         }
     }
 
-    // TODO Write tests
-    public int deleteClientWithId(String client_id) {
+    public boolean deleteClientWithId(String client_id) {
         try {
+            Integer id = Integer.parseInt(client_id);
+
             return this.bankDao.deleteClientWithId(Integer.parseInt(client_id));
         } catch (NumberFormatException e) {
             logger.debug("Invalid ID entered");
-            return 0;
+            throw new IllegalArgumentException("Invalid ID entered");
         }
     }
 
