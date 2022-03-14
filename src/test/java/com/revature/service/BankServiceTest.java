@@ -254,4 +254,27 @@ public class BankServiceTest {
             Assertions.assertEquals(expected, actual);
         }
     }
+
+    @Test
+    public void test_updateClientAccount_positiveTest() {
+        Account account = new Account(1, 1, 1, Account.AccountType.CHECKING);
+        when(mockDao.updateClientAccount(account)).thenReturn(account);
+
+        Account actual = bankService.updateClientAccount(account);
+        Account expected = new Account(1, 1, 1, Account.AccountType.CHECKING);
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void test_updateClientAccount_negativeBalance() {
+        try {
+            bankService.updateClientAccount(new Account(-1, 1, 1, Account.AccountType.CHECKING));
+        } catch (IllegalArgumentException e) {
+            String actual = e.getMessage();
+            String expected = "Account cannot have a negative balance";
+
+            Assertions.assertEquals(expected, actual);
+        }
+    }
 }

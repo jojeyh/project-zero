@@ -104,7 +104,6 @@ public class BankService {
         return this.bankDao.getAllClientAccountsInBetween(id, lessThan, greaterThan);
     }
 
-    // TODO write tests
     public Account getAccountById(String accountId) {
         try {
             Integer id = Integer.parseInt(accountId);
@@ -115,9 +114,15 @@ public class BankService {
     }
 
     // TODO write test
-    public Account updateClientAccount(Account updatedAccount) throws NegativeAccountBalance, WrongIdException {
-        validateAccountInfo(updatedAccount);
-        return this.bankDao.updateClientAccount(updatedAccount);
+    public Account updateClientAccount(Account updatedAccount) {
+        try {
+            validateAccountInfo(updatedAccount);
+            return this.bankDao.updateClientAccount(updatedAccount);
+        } catch (NegativeAccountBalance e) {
+            throw new IllegalArgumentException("Account cannot have a negative balance");
+        } catch (WrongIdException e) {
+            throw new IllegalArgumentException("Id must be a non-negative integer");
+        }
     }
 
     // TODO write test
