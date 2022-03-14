@@ -52,16 +52,26 @@ public class BankService {
     }
 
     public Client updateClientWithId(Client client, Integer clientId) throws WrongIdException {
-        if (client.getId() != clientId) {
-            throw new WrongIdException("Cannot change a client's ID.  Either create a new record or update with same ID");
-        } else {
-            return this.bankDao.updateClientWithId(client);
+        try {
+            if (client.getId() != clientId) {
+                throw new WrongIdException("Cannot change a client's ID.  Either create a new record or update with same ID");
+            } else {
+                return this.bankDao.updateClientWithId(client);
+            }
+        } catch (NumberFormatException e) {
+            logger.debug("Invalid ID entered");
+            return null;
         }
     }
 
     // TODO Write tests
-    public void deleteClientWithId(String client_id) {
-        this.bankDao.deleteClientWithId(client_id);
+    public int deleteClientWithId(String client_id) {
+        try {
+            return this.bankDao.deleteClientWithId(Integer.parseInt(client_id));
+        } catch (NumberFormatException e) {
+            logger.debug("Invalid ID entered");
+            return 0;
+        }
     }
 
     // TODO WRite tests

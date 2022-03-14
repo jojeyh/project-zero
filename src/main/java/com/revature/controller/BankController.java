@@ -57,7 +57,7 @@ public class BankController implements Controller {
     };
 
     public Handler deleteClientWithId = ctx -> {
-        this.bankService.deleteClientWithId(ctx.pathParam("client_id"));
+        Integer ok = this.bankService.deleteClientWithId(ctx.pathParam("client_id"));
     };
 
     public Handler addAccountById = ctx -> {

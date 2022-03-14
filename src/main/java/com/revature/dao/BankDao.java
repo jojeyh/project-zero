@@ -102,21 +102,23 @@ public class BankDao {
         return null;
     } // updateClientWithId
 
-    public void deleteClientWithId(String clientId) {
+    public int deleteClientWithId(Integer clientId) {
         try (Connection conn = ConnectionUtility.getConnection()) {
-            Integer id = Integer.parseInt(clientId);
+            Integer id = clientId;
             String query = "DELETE FROM clients WHERE id=?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, id);
 
             if (stmt.executeUpdate()==1) {
                 logger.info("Deleted client with ID " + clientId);
+                return 1;
             }
 
         } catch (SQLException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
         }
+        return 0;
     }
 
     public boolean addAccountById(Account account) {

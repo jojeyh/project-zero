@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -125,5 +126,25 @@ public class BankServiceTest {
         }
     }
 
+    @Test
+    public void test_deleteClientWithId_positiveTest() {
+        when(mockDao.deleteClientWithId(anyInt())).thenReturn(1);
 
+        Integer actual = bankService.deleteClientWithId("2");
+        Integer expected = 1;
+
+        Assertions.assertEquals(actual, expected);
+    }
+
+    @Test
+    public void test_deleteClientWithId_invalidID() {
+        try {
+            bankService.deleteClientWithId("AAA");
+        } catch (NumberFormatException e) {
+            String expected = "Invalid ID entered";
+            String actual = e.getMessage();
+
+            Assertions.assertEquals(expected, actual);
+        }
+    }
 }
