@@ -230,4 +230,28 @@ public class BankServiceTest {
 
         Assertions.assertEquals(expected, actual);
     }
+
+    @Test
+    public void test_getAccountById_positiveTest() {
+        Account account = new Account(1000, 1, 1, Account.AccountType.CHECKING);
+        when(mockDao.getAccountById(1)).thenReturn(account);
+
+        Account actual = bankService.getAccountById("1");
+        Account expected = new Account(1000, 1, 1, Account.AccountType.CHECKING);
+
+        Assertions.assertEquals(actual, expected);
+    }
+
+    @Test
+    public void test_getAccountById_invalidId() {
+        try {
+            bankService.getAccountById("abasd");
+            fail();
+        } catch (IllegalArgumentException e) {
+            String actual = e.getMessage();
+            String expected = "Invalid ID entered";
+
+            Assertions.assertEquals(expected, actual);
+        }
+    }
 }

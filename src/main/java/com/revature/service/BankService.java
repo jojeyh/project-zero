@@ -97,7 +97,6 @@ public class BankService {
         }
     }
 
-    // TODO write tests
     public List<Account> getAllClientAccountsInBetween(String client_id, String amountLessThan, String amountGreaterThan) {
         Integer id = Integer.parseInt(client_id);
         Integer lessThan = Integer.parseInt(amountLessThan);
@@ -106,8 +105,13 @@ public class BankService {
     }
 
     // TODO write tests
-    public Account getAccountById(Integer accountId) {
-        return this.bankDao.getAccountById(accountId);
+    public Account getAccountById(String accountId) {
+        try {
+            Integer id = Integer.parseInt(accountId);
+            return this.bankDao.getAccountById(id);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid ID entered");
+        }
     }
 
     // TODO write test

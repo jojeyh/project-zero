@@ -97,8 +97,7 @@ public class BankController implements Controller {
     };
 
     public Handler getAccountById = ctx -> {
-        Integer accountId = Integer.parseInt(ctx.pathParam("account_id"));
-        Account account = this.bankService.getAccountById(accountId);
+        Account account = this.bankService.getAccountById(ctx.pathParam("account_id"));
         ctx.json(account);
     };
 
