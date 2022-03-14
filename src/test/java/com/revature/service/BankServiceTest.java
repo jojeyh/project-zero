@@ -277,4 +277,16 @@ public class BankServiceTest {
             Assertions.assertEquals(expected, actual);
         }
     }
+
+    @Test
+    public void test_deleteAccount_invalidId() {
+        try {
+            bankService.deleteAccount("adejd");
+        } catch (IllegalArgumentException e) {
+            String actual = e.getMessage();
+            String expected = "Id must be a non-negative integer";
+
+            Assertions.assertEquals(expected, actual);
+        }
+    }
 }

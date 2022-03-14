@@ -108,8 +108,7 @@ public class BankController implements Controller {
     };
 
     public Handler deleteAccount = ctx -> {
-        Integer accountId = Integer.parseInt(ctx.pathParam("account_id"));
-        this.bankService.deleteAccount(accountId);
+        this.bankService.deleteAccount(ctx.pathParam("account_id"));
     };
 
     @Override

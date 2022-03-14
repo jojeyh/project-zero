@@ -113,7 +113,6 @@ public class BankService {
         }
     }
 
-    // TODO write test
     public Account updateClientAccount(Account updatedAccount) {
         try {
             validateAccountInfo(updatedAccount);
@@ -125,9 +124,13 @@ public class BankService {
         }
     }
 
-    // TODO write test
-    public void deleteAccount(Integer accountId) {
-        this.bankDao.deleteAccount(accountId);
+    public void deleteAccount(String accountId) {
+        try {
+            Integer id = Integer.parseInt(accountId);
+            this.bankDao.deleteAccount(id);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Id must be a non-negative integer");
+        }
     }
 
     private void validateClientInfo(Client client) {
