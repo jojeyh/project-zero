@@ -190,4 +190,30 @@ public class BankServiceTest {
         }
     }
 
+    @Test
+    public void test_getAllClientAccounts_postiveTest() {
+        List<Account> accounts = new ArrayList<>();
+        accounts.add(new Account(1, 1, 1, Account.AccountType.CHECKING));
+        accounts.add(new Account(2, 2, 1, Account.AccountType.SAVINGS));
+
+        when(mockDao.getAllClientAccounts(1)).thenReturn(accounts);
+
+        List<Account> actual = bankService.getAllClientAccounts("1");
+        List<Account> expected = new ArrayList<>(accounts);
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void test_getAllClientAccounts_invalidID() {
+        try {
+            bankService.getAllClientAccounts("aekddkd");
+            fail();
+        } catch (IllegalArgumentException e) {
+            String actual = e.getMessage();
+            String expected = "Invalid ID entered";
+
+            Assertions.assertEquals(expected, actual);
+        }
+    }
 }

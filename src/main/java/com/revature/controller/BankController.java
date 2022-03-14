@@ -84,16 +84,13 @@ public class BankController implements Controller {
     public Handler getAllClientAccounts = ctx -> {
         List<Account> accounts = new ArrayList<>();
         if (!ctx.queryParamMap().isEmpty()) {
-            Integer amountLessThan = Integer.parseInt(ctx.queryParam("amountLessThan"));
-            Integer amountGreaterThan = Integer.parseInt(ctx.queryParam("amountGreaterThan"));
-
             accounts = this.bankService.getAllClientAccountsInBetween(
-                    Integer.parseInt(ctx.pathParam("client_id")),
-                    amountLessThan,
-                    amountGreaterThan
+                    ctx.pathParam("client_id"),
+                    ctx.queryParam("amountLessThan"),
+                    ctx.queryParam("amountGreaterThan")
             );
         } else {
-            accounts = this.bankService.getAllClientAccounts(Integer.parseInt(ctx.pathParam("client_id")));
+            accounts = this.bankService.getAllClientAccounts(ctx.pathParam("client_id"));
         }
         ctx.json(accounts);
         ctx.status(200); // OK

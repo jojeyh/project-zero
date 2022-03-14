@@ -76,7 +76,6 @@ public class BankService {
         }
     }
 
-    // TODO WRite tests
     public boolean addAccountById(Account account) {
         try {
             validateAccountInfo(account);
@@ -88,14 +87,22 @@ public class BankService {
         }
     }
 
-    // TODO write tests
-    public List<Account> getAllClientAccounts(Integer client_id) {
-        return this.bankDao.getAllClientAccounts(client_id);
+    public List<Account> getAllClientAccounts(String client_id) {
+        try {
+            Integer id = Integer.parseInt(client_id);
+            return this.bankDao.getAllClientAccounts(id);
+        } catch (NumberFormatException e) {
+            logger.debug("Invalid ID entered");
+            throw new IllegalArgumentException("Invalid ID entered");
+        }
     }
 
     // TODO write tests
-    public List<Account> getAllClientAccountsInBetween(Integer client_id, Integer amountLessThan, Integer amountGreaterThan) {
-        return this.bankDao.getAllClientAccountsInBetween(client_id, amountLessThan, amountGreaterThan);
+    public List<Account> getAllClientAccountsInBetween(String client_id, String amountLessThan, String amountGreaterThan) {
+        Integer id = Integer.parseInt(client_id);
+        Integer lessThan = Integer.parseInt(amountLessThan);
+        Integer greaterThan = Integer.parseInt(amountGreaterThan);
+        return this.bankDao.getAllClientAccountsInBetween(id, lessThan, greaterThan);
     }
 
     // TODO write tests
