@@ -27,6 +27,7 @@ public class BankService {
 
     public int createClient(Client client) throws IllegalArgumentException {
         validateClientInfo(client);
+
         return bankDao.createClient(client);
     }
 
@@ -50,6 +51,7 @@ public class BankService {
         }
     }
 
+    // TODO Write tests
     public Client updateClientWithId(Client client, Integer clientId) throws WrongIdException {
         if (client.getId() != clientId) {
             throw new WrongIdException("Cannot change a client's ID.  Either create a new record or update with same ID");
@@ -58,30 +60,37 @@ public class BankService {
         }
     }
 
+    // TODO Write tests
     public void deleteClientWithId(String client_id) {
         this.bankDao.deleteClientWithId(client_id);
     }
 
+    // TODO WRite tests
     public boolean addAccountById(Account account) {
         return this.bankDao.addAccountById(account);
     }
 
+    // TODO write tests
     public List<Account> getAllClientAccounts(Integer client_id) {
         return this.bankDao.getAllClientAccounts(client_id);
     }
 
+    // TODO write tests
     public List<Account> getAllClientAccountsInBetween(Integer client_id, Integer amountLessThan, Integer amountGreaterThan) {
         return this.bankDao.getAllClientAccountsInBetween(client_id, amountLessThan, amountGreaterThan);
     }
 
+    // TODO write tests
     public Account getAccountById(Integer accountId) {
         return this.bankDao.getAccountById(accountId);
     }
 
+    // TODO write test
     public Account updateClientAccount(Account updatedAccount) {
         return this.bankDao.updateClientAccount(updatedAccount);
     }
 
+    // TODO write test
     public void deleteAccount(Integer accountId) {
         this.bankDao.deleteAccount(accountId);
     }
@@ -95,8 +104,10 @@ public class BankService {
         }
 
         if (!client.getLastName().matches("[a-zA-Z]+")) {
-            throw new IllegalArgumentException("Last name must be alphabetical characters only.");
+            throw new IllegalArgumentException("Last name must be alphabetical characters only");
         }
+
+        logger.info("Client " + client.getId() + " validated");
     }
 
     private void validateAccountInfo(Account account) {

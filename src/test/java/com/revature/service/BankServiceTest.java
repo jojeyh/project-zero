@@ -5,8 +5,6 @@ import com.revature.exception.ClientNotFoundException;
 import com.revature.model.Client;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,21 +14,45 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
 public class BankServiceTest {
 
     BankDao mockDao = mock(BankDao.class);
     BankService bankService = new BankService(mockDao);
 
-
-    /*
     @Test
-    public void testCreateClient() {
+    public void test_createClient_positiveTest() {
+        when(mockDao.createClient(new Client("Peter", "Pan", 1))).thenReturn(1);
 
+        Integer actual = bankService.createClient(new Client("Peter", "Pan", 1));
+        Integer expected = 1;
+
+        Assertions.assertEquals(expected, actual);
     }
-    */
 
-    // Positive
+    @Test
+    public void test_createClient_invalidFirstName() {
+        try {
+            bankService.createClient(new Client("Ger445akd", "Bernard"));
+        } catch (IllegalArgumentException e) {
+            String expected = "First name must be alphabetical characters only";
+            String actual = e.getMessage();
+
+            Assertions.assertEquals(expected, actual);
+        }
+    }
+
+    @Test
+    public void test_createClient_invalidLastName() {
+        try {
+            bankService.createClient(new Client("George", "Ber4929d"));
+        } catch (IllegalArgumentException e) {
+            String expected = "Last name must be alphabetical characters only";
+            String actual = e.getMessage();
+
+            Assertions.assertEquals(expected, actual);
+        }
+    }
+
     @Test
     public void testGetAllClients() {
 
@@ -79,7 +101,4 @@ public class BankServiceTest {
         }
     }
 
-    @Test
-    public void test_createClient_positiveTest() {
-    }
 }
