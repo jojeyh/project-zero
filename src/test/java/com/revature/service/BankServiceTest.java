@@ -3,6 +3,7 @@ package com.revature.service;
 import com.revature.dao.BankDao;
 import com.revature.exception.ClientNotFoundException;
 import com.revature.exception.WrongIdException;
+import com.revature.model.Account;
 import com.revature.model.Client;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -105,10 +106,11 @@ public class BankServiceTest {
 
     @Test
     public void test_updateClientWithId_positiveTest() throws WrongIdException {
-        when(mockDao.updateClientWithId(new Client("Peter", "Pan", 10)))
-                .thenReturn(new Client("Peter", "Pan", 10));
+        Client client = new Client("Peter", "Pan", 10);
+        when(mockDao.updateClientWithId(client))
+                .thenReturn(client);
 
-        Client actual = bankService.updateClientWithId(new Client("Peter", "Pan", 10), 10);
+        Client actual = bankService.updateClientWithId(client, 10);
         Client expected = new Client("Peter", "Pan", 10);
 
         Assertions.assertEquals(expected, actual);
@@ -144,6 +146,45 @@ public class BankServiceTest {
         } catch (IllegalArgumentException e) {
             String expected = "Invalid ID entered";
             String actual = e.getMessage();
+
+            Assertions.assertEquals(expected, actual);
+        }
+    }
+
+    @Test
+    public void test_addAccountById_positiveTest() {
+        Account account = new Account(1, 1, 1, Account.AccountType.CHECKING);
+        when(mockDao.addAccountById(account)).thenReturn(true);
+
+        Boolean actual = bankService.addAccountById(account);
+        Boolean expected = true;
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void test_addAccountById_negativeBalance() {
+        Account account = new Account(-1, 1, 1, Account.AccountType.CHECKING);
+
+        try {
+            bankService.addAccountById(account);
+        } catch (IllegalArgumentException e) {
+            String actual = e.getMessage();
+            String expected = "Cannot have a negative account balance";
+
+            Assertions.assertEquals(expected, actual);
+        }
+    }
+
+    @Test
+    public void test_addAccountById_negativeClientId() {
+        Account account = new Account(1, 1, -1, Account.AccountType.CHECKING);
+
+        try {
+            bankService.addAccountById(account);
+        } catch (IllegalArgumentException e) {
+            String actual = e.getMessage();
+            String expected = "Id must be a non-negative integer";
 
             Assertions.assertEquals(expected, actual);
         }

@@ -2,6 +2,7 @@ package com.revature.service;
 
 import com.revature.dao.BankDao;
 import com.revature.exception.ClientNotFoundException;
+import com.revature.exception.NegativeAccountBalance;
 import com.revature.exception.WrongIdException;
 import com.revature.model.Account;
 import com.revature.model.Client;
@@ -77,7 +78,14 @@ public class BankService {
 
     // TODO WRite tests
     public boolean addAccountById(Account account) {
-        return this.bankDao.addAccountById(account);
+        try {
+            validateAccountInfo(account);
+            return this.bankDao.addAccountById(account);
+        } catch (NegativeAccountBalance e) {
+            throw new IllegalArgumentException("Cannot have a negative account balance");
+        } catch (WrongIdException e) {
+            throw new IllegalArgumentException("Id must be a non-negative integer");
+        }
     }
 
     // TODO write tests
@@ -96,7 +104,8 @@ public class BankService {
     }
 
     // TODO write test
-    public Account updateClientAccount(Account updatedAccount) {
+    public Account updateClientAccount(Account updatedAccount) throws NegativeAccountBalance, WrongIdException {
+        validateAccountInfo(updatedAccount);
         return this.bankDao.updateClientAccount(updatedAccount);
     }
 
@@ -120,13 +129,14 @@ public class BankService {
         logger.info("Client " + client.getId() + " validated");
     }
 
-    private void validateAccountInfo(Account account) {
+    private void validateAccountInfo(Account account) throws IllegalArgumentException, NegativeAccountBalance,
+            WrongIdException {
         if (account.getBalance() < 0) {
-            throw new IllegalArgumentException("Account balance must be non-negative integer");
+            throw new NegativeAccountBalance("Account balance must be non-negative integer");
         }
 
-        if (!BankService.enumContains(account.getAccountType())) {
-            throw new IllegalArgumentException("Account type is not a valid type");
+        if (account.getClientId() < 0) {
+            throw new WrongIdException("Client ID must be a positive integer");
         }
     }
 
