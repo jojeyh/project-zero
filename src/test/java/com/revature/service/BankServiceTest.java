@@ -2,6 +2,7 @@ package com.revature.service;
 
 import com.revature.dao.BankDao;
 import com.revature.exception.ClientNotFoundException;
+import com.revature.exception.WrongIdException;
 import com.revature.model.Client;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -100,5 +101,29 @@ public class BankServiceTest {
             Assertions.assertEquals(expectedMsg, actualMsg);
         }
     }
+
+    @Test
+    public void test_updateClientWithId_positiveTest() throws WrongIdException {
+        when(mockDao.updateClientWithId(new Client("Peter", "Pan", 10)))
+                .thenReturn(new Client("Peter", "Pan", 10));
+
+        Client actual = bankService.updateClientWithId(new Client("Peter", "Pan", 10), 10);
+        Client expected = new Client("Peter", "Pan", 10);
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void test_updateClientWithId_WrongId() {
+        try {
+            bankService.updateClientWithId(new Client("Peter", "Pan", 10), 12);
+        } catch (WrongIdException e) {
+            String expected = "Cannot change a client's ID.  Either create a new record or update with same ID";
+            String actual = e.getMessage();
+
+            Assertions.assertEquals(expected, actual);
+        }
+    }
+
 
 }

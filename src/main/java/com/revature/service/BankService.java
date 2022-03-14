@@ -51,7 +51,6 @@ public class BankService {
         }
     }
 
-    // TODO Write tests
     public Client updateClientWithId(Client client, Integer clientId) throws WrongIdException {
         if (client.getId() != clientId) {
             throw new WrongIdException("Cannot change a client's ID.  Either create a new record or update with same ID");
