@@ -7,6 +7,9 @@ import io.javalin.Javalin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// TODO add transfer method
+// TODO 1 Add logging for exceptions and also create examples in Postman
+// TODO Log all methods when called
 public class Driver {
     private static Logger logger = LoggerFactory.getLogger(Driver.class);
 

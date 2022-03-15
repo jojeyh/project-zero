@@ -11,8 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-// TODO Add exceptions and error checking in this layer, check each method to handle any edge cases or incorrect info
-
 public class BankService {
     private static Logger logger = LoggerFactory.getLogger(BankService.class);
 
@@ -52,16 +50,17 @@ public class BankService {
         }
     }
 
-    public Client updateClientWithId(Client client, Integer clientId) throws WrongIdException {
+    public Client updateClientWithId(String firstname, String lastname, String id) {
         try {
-            if (client.getId() != clientId) {
-                throw new WrongIdException("Cannot change a client's ID.  Either create a new record or update with same ID");
-            } else {
-                return this.bankDao.updateClientWithId(client);
-            }
+            Client client = new Client(
+                    firstname,
+                    lastname,
+                    Integer.parseInt(id)
+            );
+            return this.bankDao.updateClientWithId(client);
         } catch (NumberFormatException e) {
             logger.debug("Invalid ID entered");
-            return null;
+            throw new IllegalArgumentException("Id must be a positive integer");
         }
     }
 
@@ -124,10 +123,10 @@ public class BankService {
         }
     }
 
-    public void deleteAccount(String accountId) {
+    public Boolean deleteAccount(String accountId) {
         try {
             Integer id = Integer.parseInt(accountId);
-            this.bankDao.deleteAccount(id);
+            return this.bankDao.deleteAccount(id);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Id must be a non-negative integer");
         }

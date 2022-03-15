@@ -85,11 +85,11 @@ public class BankDao {
 
     public Client updateClientWithId(Client client) {
         try (Connection conn = ConnectionUtility.getConnection()) {
-            String query = "UPDATE clients SET firstname=?, lastname=?, accounts=? WHERE id=?";
+            String query = "UPDATE clients SET firstname=?, lastname=? WHERE id=?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, client.getFirstName());
             stmt.setString(2, client.getLastName());
-            stmt.setInt(4, client.getId());
+            stmt.setInt(3, client.getId());
 
             if (stmt.executeUpdate() == 1) {
                 logger.info("Client with id " + client.getId() + " info changed.");
@@ -128,10 +128,12 @@ public class BankDao {
             stmt.setInt(1, account.getBalance());
             stmt.setInt(2, account.getClientId());
             stmt.setString(3, account.getAccountType().name());
-            ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next()) {
-                logger.info("Added account " + rs.getInt(1) + "to client " + account.getClientId());
-                return true;
+            if (stmt.executeUpdate() == 1) {
+                ResultSet rs = stmt.getGeneratedKeys();
+                if (rs.next()) {
+                    logger.info("Added account " + rs.getInt(1) + " to client " + account.getClientId());
+                    return true;
+                }
             }
         } catch (SQLException e) {
             logger.debug(e.getMessage());
@@ -219,17 +221,19 @@ public class BankDao {
         return null;
     }
 
-    public void deleteAccount(Integer accountId) {
+    public Boolean deleteAccount(Integer accountId) {
         try (Connection conn = ConnectionUtility.getConnection()) {
             String query = "DELETE FROM accounts WHERE id=?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, accountId);
             if (stmt.executeUpdate() == 1) {
                 logger.info("Deleted Account " + accountId);
+                return true;
             }
         } catch (SQLException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
         }
+        return false;
     } // deleteAccount
 } // class BankDao

@@ -104,25 +104,27 @@ public class BankServiceTest {
         }
     }
 
+    // Redo tests with changes to updateClient
     @Test
     public void test_updateClientWithId_positiveTest() throws WrongIdException {
         Client client = new Client("Peter", "Pan", 10);
         when(mockDao.updateClientWithId(client))
-                .thenReturn(client);
+                .thenReturn(new Client("Peter", "Panning", 10));
 
-        Client actual = bankService.updateClientWithId(client, 10);
-        Client expected = new Client("Peter", "Pan", 10);
+        Client actual = bankService.updateClientWithId(client.getFirstName(), client.getLastName(), "10");
+        Client expected = new Client("Peter", "Panning", 10);
 
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
-    public void test_updateClientWithId_WrongId() {
+    public void test_updateClientWithId_invalidId() {
         try {
-            bankService.updateClientWithId(new Client("Peter", "Pan", 10), 12);
-        } catch (WrongIdException e) {
-            String expected = "Cannot change a client's ID.  Either create a new record or update with same ID";
+            bankService.updateClientWithId("Peter", "Pan", "aksdid");
+            fail();
+        } catch (IllegalArgumentException e) {
             String actual = e.getMessage();
+            String expected = "Id must be a positive integer";
 
             Assertions.assertEquals(expected, actual);
         }

@@ -26,3 +26,12 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+jar {
+    archiveBaseName = 'project-zero'
+    archiveVersion = '0.1.0'
+}
+
+apply plugin: 'application'
+
+mainClassName = 'com.revature.main.Driver'
