@@ -14,6 +14,7 @@ public class Driver {
     private static Logger logger = LoggerFactory.getLogger(Driver.class);
 
     public static void main(String[] args) {
+        logger.info("Main called, app beginning...");
         Javalin app = Javalin.create();
 
         app.before(ctx -> {

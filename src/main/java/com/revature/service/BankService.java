@@ -34,7 +34,7 @@ public class BankService {
         return this.bankDao.getAllClients();
     }
 
-    public Client getClientWithId(String id) throws ClientNotFoundException {
+    public Client getClientWithId(String id) throws ClientNotFoundException, IllegalArgumentException {
         try {
             int client_id = Integer.parseInt(id);
 
@@ -46,6 +46,7 @@ public class BankService {
 
             return client;
         } catch (NumberFormatException e) {
+            logger.debug("NumberFormatException caught in getClientWithId");
             throw new IllegalArgumentException("Id provided must be a valid int");
         }
     }
@@ -57,6 +58,7 @@ public class BankService {
                     lastname,
                     Integer.parseInt(id)
             );
+            validateClientInfo(client);
             return this.bankDao.updateClientWithId(client);
         } catch (NumberFormatException e) {
             logger.debug("Invalid ID entered");

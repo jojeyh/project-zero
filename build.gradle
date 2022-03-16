@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'application'
 }
 
 group 'org.example'
@@ -27,11 +27,6 @@ test {
     useJUnitPlatform()
 }
 
-jar {
-    archiveBaseName = 'project-zero'
-    archiveVersion = '0.1.0'
+application {
+    mainClass.set("com.revature.main.Driver")
 }
-
-apply plugin: 'application'
-
-mainClassName = 'com.revature.main.Driver'

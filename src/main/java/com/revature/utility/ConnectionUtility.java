@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 public class ConnectionUtility {
 
-    private ConnectionUtility() {};
+    private ConnectionUtility() {}
 
     public static Connection getConnection() throws SQLException {
         DriverManager.registerDriver(new Driver());

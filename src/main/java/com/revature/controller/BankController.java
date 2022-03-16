@@ -1,6 +1,8 @@
 package com.revature.controller;
 
 import com.google.gson.Gson;
+import com.revature.exception.AccountNotFoundException;
+import com.revature.exception.ClientNotFoundException;
 import com.revature.model.Account;
 import com.revature.model.Client;
 import com.revature.service.BankService;
@@ -14,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 // TODO Add ctx.status to all Handlers
+// TODO Add ClientNotFound exceptions to relevant handlers
+// Log to file?
 public class BankController implements Controller {
     private BankService bankService;
 
@@ -21,7 +25,7 @@ public class BankController implements Controller {
         this.bankService = new BankService();
     }
 
-    public static Logger logger = new LoggerFactory.getLogger(BankController.class);
+    public static Logger logger = LoggerFactory.getLogger(BankController.class);
 
     public Handler createClient = (ctx) -> {
         JSONObject obj = new JSONObject(ctx.body());
@@ -120,7 +124,13 @@ public class BankController implements Controller {
     };
 
     public Handler deleteAccount = ctx -> {
-        logger.log("Calling BankService.deleteAccount");
+        logger.info("Calling BankService.deleteAccount");
+        if (bankService.getClientWithId(ctx.pathParam("client_id")) == null) {
+            throw new ClientNotFoundException("Client with id " + ctx.pathParam("client_id") + " does not exist");
+        }
+        if (bankService.getAccountById(ctx.pathParam("account_id")) == null) {
+            throw new AccountNotFoundException("Account with id " + ctx.pathParam("account_id") + " does not exist");
+        }
         Boolean ok = this.bankService.deleteAccount(ctx.pathParam("account_id"));
         if (ok) {
             ctx.result("Account " + ctx.pathParam("account_id") + " deleted");
