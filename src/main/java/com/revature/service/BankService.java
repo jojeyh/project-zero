@@ -98,7 +98,8 @@ public class BankService {
         }
     }
 
-    public List<Account> getAllClientAccountsInBetween(String client_id, String amountLessThan, String amountGreaterThan) {
+    public List<Account> getAllClientAccountsInBetween(String client_id, String amountLessThan,
+            String amountGreaterThan) {
         Integer id = Integer.parseInt(client_id);
         Integer lessThan = Integer.parseInt(amountLessThan);
         Integer greaterThan = Integer.parseInt(amountGreaterThan);

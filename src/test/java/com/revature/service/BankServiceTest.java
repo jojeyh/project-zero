@@ -225,7 +225,7 @@ public class BankServiceTest {
         accounts.add(new Account(20, 2, 1, Account.AccountType.CHECKING));
 
         when(mockDao.getAllClientAccountsInBetween(1, 10, 30))
-                .thenReturn(accounts);
+            .thenReturn(accounts);
 
         List<Account> actual = bankService.getAllClientAccountsInBetween("1", "10", "30");
         List<Account> expected = new ArrayList<>(accounts);
