@@ -8,16 +8,20 @@ import java.sql.SQLException;
 
 public class ConnectionUtility {
 
-    private ConnectionUtility() {}
+    private String url;
+    private String username;
+    private String password;
 
-    public static Connection getConnection() throws SQLException {
+    public ConnectionUtility(String url, String username, String password) {
+        this.url = url;
+        this.username = username;
+        this.password = password;
+    }
+
+    public Connection getConnection() throws SQLException {
         DriverManager.registerDriver(new Driver());
 
-        String url = System.getenv("DB_URL");
-        String username = System.getenv("DB_USER");
-        String password = System.getenv("DB_PASS");
-
-        Connection conn = DriverManager.getConnection(url, username, password);
+        Connection conn = DriverManager.getConnection(this.url, this.username, this.password);
 
         return conn;
     }

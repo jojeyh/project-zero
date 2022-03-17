@@ -8,7 +8,10 @@ public class ConnectionUtilityTest {
 
     @Test
     public void test_getConnection() throws SQLException {
-        ConnectionUtility.getConnection();
+        ConnectionUtility cutil = new ConnectionUtility(
+                System.getenv("DB_URL"), System.getenv("DB_USER"), System.getenv("DB_PASS")
+        );
+        cutil.getConnection();
     }
 
 }

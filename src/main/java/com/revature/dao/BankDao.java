@@ -13,9 +13,14 @@ import java.util.List;
 public class BankDao {
 
     private static Logger logger = LoggerFactory.getLogger(BankDao.class);
+    private static ConnectionUtility conner = new ConnectionUtility(
+            System.getenv("DB_URL"),
+            System.getenv("DB_USER"),
+            System.getenv("DB_PASS")
+    );
 
     public int createClient(Client client) {
-        try (Connection conn = ConnectionUtility.getConnection()) {
+        try (Connection conn = conner.getConnection()) {
             String query = "INSERT INTO clients (lastname, firstname) VALUES (?, ?)";
             PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
@@ -42,7 +47,7 @@ public class BankDao {
     public List<Client> getAllClients() {
         List<Client> clients = new ArrayList<>();
 
-        try (Connection conn = ConnectionUtility.getConnection()) {
+        try (Connection conn = conner.getConnection()) {
             String query = "SELECT * FROM clients";
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet rs = stmt.executeQuery();
@@ -63,7 +68,7 @@ public class BankDao {
     }
 
     public Client getClientWithId(Integer client_id) {
-        try (Connection conn = ConnectionUtility.getConnection()) {
+        try (Connection conn = conner.getConnection()) {
             String query = "SELECT * FROM clients WHERE id = ?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, client_id);
@@ -84,7 +89,7 @@ public class BankDao {
     } // getClientWithId
 
     public Client updateClientWithId(Client client) {
-        try (Connection conn = ConnectionUtility.getConnection()) {
+        try (Connection conn = conner.getConnection()) {
             String query = "UPDATE clients SET firstname=?, lastname=? WHERE id=?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, client.getFirstName());
@@ -103,7 +108,7 @@ public class BankDao {
     } // updateClientWithId
 
     public boolean deleteClientWithId(Integer clientId) {
-        try (Connection conn = ConnectionUtility.getConnection()) {
+        try (Connection conn = conner.getConnection()) {
             Integer id = clientId;
             String query = "DELETE FROM clients WHERE id=?";
             PreparedStatement stmt = conn.prepareStatement(query);
@@ -122,7 +127,7 @@ public class BankDao {
     }
 
     public boolean addAccountById(Account account) {
-        try (Connection conn = ConnectionUtility.getConnection()) {
+        try (Connection conn = conner.getConnection()) {
             String query = "INSERT INTO accounts (balance, clientid, type) VALUES (?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             stmt.setInt(1, account.getBalance());
@@ -143,7 +148,7 @@ public class BankDao {
     } // addAccountById
 
     public List<Account> getAllClientAccounts(Integer client_id) {
-        try (Connection conn = ConnectionUtility.getConnection()) {
+        try (Connection conn = conner.getConnection()) {
             ArrayList<Account> accounts = new ArrayList<>();
             String query = "SELECT * FROM accounts WHERE clientid=?";
             PreparedStatement stmt = conn.prepareStatement(query);
@@ -180,7 +185,7 @@ public class BankDao {
     }
 
     public Account getAccountById(Integer accountId) {
-        try (Connection conn = ConnectionUtility.getConnection()) {
+        try (Connection conn = conner.getConnection()) {
             String query = "SELECT * FROM accounts WHERE id=?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, accountId);
@@ -203,7 +208,7 @@ public class BankDao {
     }
 
     public Account updateClientAccount(Account updatedAccount) {
-        try (Connection conn = ConnectionUtility.getConnection()) {
+        try (Connection conn = conner.getConnection()) {
             String query = "UPDATE accounts SET type=?, balance=? WHERE id=?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(3, updatedAccount.getId());
@@ -222,7 +227,7 @@ public class BankDao {
     }
 
     public Boolean deleteAccount(Integer accountId) {
-        try (Connection conn = ConnectionUtility.getConnection()) {
+        try (Connection conn = conner.getConnection()) {
             String query = "DELETE FROM accounts WHERE id=?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, accountId);
